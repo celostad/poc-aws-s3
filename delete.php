@@ -10,9 +10,8 @@ if(isset($_REQUEST['key'])){
             'Bucket' => $bucket,
             'Key'    => $_REQUEST['key']
         ));
-    
-        echo "<script>alert('Excluido com sucesso!');</script>";
-        echo "<script>window.location.href='index.php';</script>";
+        
+        echo "<script>window.location.href='index.php?delete=true';</script>";
 
     } catch (Exception $e) {
         throw "Erro" . $e;

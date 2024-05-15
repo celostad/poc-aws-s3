@@ -53,9 +53,7 @@ if ($_FILES) {
             'StorageClass' => 'STANDARD'
         ));
 
-        
-        echo "<script>alert('Arquivo carregado com sucesso!');</script>";
-        echo "<script>window.location.href='index.php';</script>";
+        echo "<script>window.location.href='index.php?success=true';</script>";
 
     } catch (Exception $e) {
         throw "Erro" . $e;
