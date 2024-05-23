@@ -1,3 +1,7 @@
+<?php
+require 'vendor/autoload.php';
+require 'config.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -13,10 +17,16 @@
 
 <body>
 
-    <?php
-    require 'vendor/autoload.php';
-    require 'config.php';
-
+<?php
+    $s3 = new Aws\S3\S3Client([
+        'version' => 'latest',
+        'region'  => $region,
+        'credentials' => array(
+            'key' => ACCESS_KEY,
+            'secret' => SECRET_KEY
+        )
+    ]);
+    
     $arrArquivos = $s3->ListObjects(['Bucket' => $bucket, 'Delimiter' => '/', 'Prefix' => $prefix]);
     $habDivAlertSucesso = 'display: none;';
     $habDivAlertDelete = 'display: none;';
@@ -30,7 +40,7 @@
             $habDivAlertDelete = 'display: block;';
         }
     }
-    ?>
+?>
 
     <div class="alert alert-success alert-dismissible" style="<?php echo $habDivAlertSucesso; ?>">
         <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
@@ -50,7 +60,7 @@
             <td style="border: 1px solid #eee;width:100px">Ações</td>
         </tr>
 
-        <?php
+<?php
         function sizeFilter($bytes)
         {
             $label = array('B', 'KB', 'MB', 'GB', 'TB', 'PB');
@@ -76,7 +86,7 @@
             return $result;
         }
 
-        if (count($arrArquivos) > 0) {
+        if (!is_null($arrArquivos['Contents'])) {
             foreach ($arrArquivos['Contents'] as $key => $arquivo) {
 
                 $strFile = $arquivo['Key'];
@@ -110,8 +120,8 @@
             echo '<td colspan="5">Não existem registros.</td>';
             echo '</tr>';
         }
-        ?>
-        
+?>
+
         <tr style="border: 1px solid #eee;font-weight: bolder; text-align:center; height:110px;">
             <form method="post" action="upload.php" enctype="multipart/form-data">
                 <td colspan="3" style="border: 0px solid #eee;height:60px;text-align:right !important;">

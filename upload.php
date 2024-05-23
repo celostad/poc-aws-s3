@@ -9,13 +9,7 @@ if (!class_exists('S3')) require_once 'S3.php';
 if (!extension_loaded('curl') && !@dl(PHP_SHLIB_SUFFIX == 'so' ? 'curl.so' : 'php_curl.dll'))
     exit("\nERROR: CURL extension not loaded\n\n");
 
-// Pointless without your keys!
-if (awsAccessKey == 'change-this' || awsSecretKey == 'change-this')
-    exit("\nERROR: AWS access information required\n\nPlease edit the following lines in this file:\n\n" .
-        "define('awsAccessKey', 'change-me');\ndefine('awsSecretKey', 'change-me');\n\n");
-
-
-S3::setAuth(awsAccessKey, awsSecretKey);
+S3::setAuth(ACCESS_KEY, SECRET_KEY);
 
 $lifetime = 3600; // Period for which the parameters are valid
 $maxFileSize = (1024 * 1024 * 100); // 100 MB
@@ -41,6 +35,16 @@ $params = S3::getHttpUploadPostParams(
 if ($_FILES) {
 
     try {
+        
+        $s3 = new Aws\S3\S3Client([
+            'version' => 'latest',
+            'region'  => $region,
+            'credentials' => array(
+                'key' => ACCESS_KEY,
+                'secret' => SECRET_KEY
+            )
+        ]);
+
         $keyname = $_FILES['file']['name'];
         $filepath = $_FILES['file']['tmp_name'];
         // Upload a file.
